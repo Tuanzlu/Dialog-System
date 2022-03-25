@@ -1,7 +1,7 @@
 <template>
 <div>
   <header-nav current="tag"></header-nav>
-
+  <add-modal :visible="modalVisible" @addData="addParentData"></add-modal>
   <div class="data-list">
     <div class="btn-bar">
       <a-button class="add-btn" @click="handleAdd">添加标注数据</a-button>
@@ -22,9 +22,10 @@
 </template>
 <script>
 import HeaderNav from "@/components/HeaderNav.vue";
+import AddModal from "@/components/AddModal.vue";
 import { defineComponent, computed, ref, reactive } from "vue";
 export default defineComponent({
-  components: { HeaderNav },
+  components: { HeaderNav, AddModal },
   setup() {
     const columns = [
       {
@@ -83,8 +84,15 @@ export default defineComponent({
         description: "调大3度",
       },
     ]);
+    let modalVisible = ref(false);
+    console.log(modalVisible)
     const count = computed(() => dataSource.value.length + 1);
     const handleAdd = () => {
+      console.log("before: " )
+      console.log(modalVisible)
+
+      modalVisible.value = true
+      console.log(modalVisible)
       const newData = {
         key: `${count.value}`,
         labeler_id: "1",
@@ -107,13 +115,22 @@ export default defineComponent({
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       }
     };
+
+    function addParentData(visible) {
+        console.log("in parent function addData")
+        console.log(visible)
+        modalVisible.value = visible
+    }
+
     return {
       columns,
       dataSource,
       handleAdd,
       handleDelete,
       count,
-      rowSelection
+      rowSelection,
+      addParentData,
+      modalVisible
     };
   },
 });

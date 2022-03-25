@@ -3,11 +3,24 @@
 
   <div class="container">
     <div class="dialog-window">
-      <div class="main-window"></div>
+      <div class="main-window">
+        <div class="one-dialog" v-for="(dialog, index) in dialogs" :key="index">
+          <div v-if="dialog.user" class="right-dialog">
+            <div class="bubble-tail-right">
+              {{ dialog.user }}
+            </div>
+            <div class="triangle-right"></div>
+          </div>
+          <div class="left-dialog">
+            <div class="triangle-left"></div>
+            <div class="bubble-tail-left">{{ dialog.robot }}</div>
+          </div>
+        </div>
+      </div>
       <div class="bottom">
         <a-input
           class="input"
-          :model="inputValue"
+          v-model:value="inputValue"
           placeholder="请输入您想说的话"
         ></a-input>
         <a-button class="btn" type="primary" @click="inputMethod"
@@ -19,20 +32,31 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import HeaderNav from "@/components/HeaderNav.vue";
 
 export default {
   components: { HeaderNav },
   setup() {
     let inputValue = ref("");
+
+    const dialogs = reactive([
+      {
+        robot: "first sentence",
+        user: "",
+      },
+    ]);
+
     function inputMethod() {
-      console.log(inputMethod);
+      console.log(inputValue.value);
+      dialogs.push({ robot: "test", user: inputValue.value });
+      inputValue.value = "";
     }
 
     return {
       inputValue,
       inputMethod,
+      dialogs,
     };
   },
 };
@@ -48,6 +72,7 @@ export default {
   margin: 20px auto 0 auto;
   border: 1px grey solid;
   border-radius: 35px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 .main-window {
   height: 400px;
@@ -55,6 +80,7 @@ export default {
   margin: 10px auto;
   border: 1px grey solid;
   border-radius: 10px;
+  overflow-y: auto;
 }
 .bottom {
   height: 35px;
@@ -69,5 +95,60 @@ export default {
   height: 35px;
   width: 60px;
   border-radius: 10px;
+}
+.one-dialog {
+  display: flex;
+  flex-direction: column;
+  align-content: space-around;
+  margin: 20px 0;
+}
+.bubble-tail-left {
+  /* position: absolute; */
+  width: 200px;
+  padding: 10px;
+  min-height: 50px;
+  border-radius: 10px;
+  word-wrap: break-word;
+
+  background-color: gainsboro;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+.bubble-tail-right {
+  width: 200px;
+  min-height: 50px;
+  padding: 10px;
+  word-wrap: break-word;
+  border-radius: 10px;
+  background-color: gainsboro;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+.left-dialog {
+  display: flex;
+
+  margin-left: 15px;
+}
+.right-dialog {
+  display: flex;
+
+  margin-left: 400px;
+}
+.triangle-left {
+  width: 0px;
+  height: 0px;
+  margin-top: 15px;
+  border-top: 8px solid transparent;
+  border-left: 10px solid transparent;
+  border-right: 10px solid rgb(240, 235, 235);
+  border-bottom: 8px solid transparent;
+}
+.triangle-right {
+  width: 0px;
+  height: 0px;
+  margin-top: 15px;
+
+  border-top: 8px solid transparent;
+  border-left: 10px solid gainsboro;
+  border-right: 10px solid transparent;
+  border-bottom: 8px solid transparent;
 }
 </style>

@@ -17,6 +17,11 @@ const routes = [
     component: () => import("../views/Robot.vue"),
   },
   {
+    path: "/login",
+    name: "login",
+    component: () => import("../views/Login.vue"),
+  },
+  {
     path: "/tag",
     name: "tag",
     component: () => import("../views/Tag.vue"),

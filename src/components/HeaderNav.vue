@@ -1,10 +1,9 @@
 <template>
 <div class="menu">
   <div>
-    <img class="logo" :src="logoUrl">
+    <img class="logo" @click="toIndex" :src="logoUrl">
   </div>
   <a-menu style="justify-content:flex-end;" :selectedKeys="curPage" mode="horizontal" @click="changePage">
-      
       <a-menu-item key="index">首页</a-menu-item>
       <a-menu-item key="user">用户管理</a-menu-item>
       <a-menu-item key="robot">在线聊天机器人</a-menu-item>
@@ -24,15 +23,21 @@ export default defineComponent({
     let logoUrl = require('@/assets/logo.png')
     let curPage = [props.current]
     function changePage(item) {
-      router.replace({
+      router.push({
         name:item.key
       })
     }
 
+    function toIndex() {
+      router.push({
+        path:'/index'
+      })
+    }
     return {
       curPage,
       logoUrl,
-      changePage
+      changePage,
+      toIndex
     }
   },
 })
