@@ -22,6 +22,7 @@
           class="input"
           v-model:value="inputValue"
           placeholder="请输入您想说的话"
+          @pressEnter="inputMethod"
         ></a-input>
         <a-button class="btn" type="primary" @click="inputMethod"
           >Enter</a-button
@@ -42,7 +43,7 @@ export default {
 
     const dialogs = reactive([
       {
-        robot: "first sentence",
+        robot: "Hi, I'm sense Hi, let's talk!",
         user: "",
       },
     ]);
@@ -72,12 +73,14 @@ export default {
   margin: 20px auto 0 auto;
   border: 1px grey solid;
   border-radius: 35px;
+  background-color: rgb(245, 241, 241);
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 .main-window {
   height: 400px;
   width: 650px;
   margin: 10px auto;
+  background-color: white;
   border: 1px grey solid;
   border-radius: 10px;
   overflow-y: auto;
@@ -90,6 +93,7 @@ export default {
 }
 .input {
   border-radius: 10px;
+  margin-right:10px;
 }
 .btn {
   height: 35px;
@@ -109,7 +113,6 @@ export default {
   min-height: 50px;
   border-radius: 10px;
   word-wrap: break-word;
-
   background-color: gainsboro;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
