@@ -1,20 +1,36 @@
 <template>
   <div>
     <header-nav current="tag"></header-nav>
-    <add-modal :visible="modalVisible" @updateData="getUpdateData" @addData="addParentData"></add-modal>
+    <add-modal
+      :visible="modalVisible"
+      @updateData="getUpdateData"
+      @addData="addParentData"
+    ></add-modal>
     <div class="data-list">
       <div class="btn-bar">
-        <a-button class="add-btn" @click="handleAdd">添加标注数据</a-button>
-        <a-button class="add-btn" @click="handleDelete">删除标注数据</a-button>
+        <a-button class="add-btn" type="primary" @click="handleAdd"
+          >开始标注任务</a-button
+        >
+        <a-button class="add-btn" @click="handleDelete" disabled
+          >删除标注数据</a-button
+        >
+        <a-popover v-model:visible="visible" title="输入标注人员ID" trigger="click">
+          <template #content>
+            <a-input style="width:100px;margin-right:15px" @pressEnter="hide" v-model:value="searchInput"></a-input>
+            <a @click="hide">确定</a>
+          </template>
+          <a-button class="add-btn">筛选数据</a-button>
+        </a-popover>
       </div>
       <a-table
         class="table"
         bordered
         :row-selection="rowSelection"
-        :pagination="{ pageSize: 20 }"
-        :scroll="{ y: 340 }"
+        :row-key="(record) => record.time_stamp"
+        :pagination="pagination"
         :data-source="dataSource.dataSource"
         :columns="columns"
+        :scroll="scrollY"
       >
       </a-table>
     </div>
@@ -23,7 +39,6 @@
 <script>
 import HeaderNav from "@/components/HeaderNav.vue";
 import AddModal from "@/components/AddModal.vue";
-// import { postData } from "@/api/webpost";
 import { getData } from "@/api/webget";
 import path from "@/api/path.js";
 
@@ -31,6 +46,14 @@ import { defineComponent, computed, ref, reactive } from "vue";
 export default defineComponent({
   components: { HeaderNav, AddModal },
   setup() {
+    console.log(document.body.offsetHeight);
+    let scrollY = reactive({ y: document.body.offsetHeight - 265 });
+    const pagination = reactive({
+      total: 100,
+      showTotal: (total) => `共 ${total} 条`,
+      pageSize: 50,
+      showQuickJumper: true,
+    });
     const columns = [
       {
         title: "标注人员ID",
@@ -54,7 +77,7 @@ export default defineComponent({
         title: "用户输入",
         key: "userSent",
         dataIndex: "user_utterance",
-        width: "25%",
+        width: "20%",
       },
       {
         title: "系统反馈",
@@ -63,27 +86,18 @@ export default defineComponent({
         width: "25%",
       },
     ];
-
+    let alldataList = [];
     const dataSource = reactive({
       dataSource: [],
     });
     let modalVisible = ref(false);
     console.log(modalVisible);
-    const count = computed(() => dataSource.value.length + 1);
     const handleAdd = () => {
       console.log("before: ");
       console.log(modalVisible);
 
       modalVisible.value = true;
       console.log(modalVisible);
-      const newData = {
-        key: `${count.value}`,
-        labeler_id: "1",
-        intent_id: "2",
-        intent_info: "调小空调温度",
-        description: "调小3度",
-      };
-      dataSource.value.push(newData);
     };
 
     let selectedTest = reactive([]);
@@ -103,10 +117,9 @@ export default defineComponent({
       },
     };
 
-
     function getUpdateData(flag) {
-      console.log("get update dataList")
-      console.log(flag)
+      console.log("get update dataList");
+      console.log(flag);
       getList();
     }
     function addParentData(visible) {
@@ -118,28 +131,49 @@ export default defineComponent({
     function getList() {
       let url = path.website.getList;
       getData(url).then((res) => {
-        dataSource.dataSource = res.map((item) => {
+        alldataList = res.map((item) => {
           let slot_str = "";
           for (let one in item.slot_values) {
-            if(item.slot_values[one] !== ""){
+            if (item.slot_values[one] !== "") {
               slot_str += `${one}:${item.slot_values[one]} / `;
             }
-            
           }
-          if(slot_str === "") {
-            slot_str = '\\'
-             item.slot_values = slot_str
-          }else {
-          item.slot_values = slot_str.substring(0, slot_str.length - 2);
-
+          if (slot_str === "") {
+            slot_str = "\\";
+            item.slot_values = slot_str;
+          } else {
+            item.slot_values = slot_str.substring(0, slot_str.length - 2);
           }
 
           return item;
         });
-        console.log(dataSource.dataSource);
+        dataSource.dataSource = alldataList;
+        pagination.total = dataSource.dataSource.length;
       });
     }
 
+    let searchInput = ref("");
+    function filterList() {
+      if (searchInput.value === "") {
+        dataSource.dataSource = alldataList;
+      } else {
+        dataSource.dataSource = alldataList.filter((item) => {
+          if(item.labeler_id === searchInput.value){
+            return true
+          }else {
+            return false
+          }
+        });
+        pagination.total = dataSource.dataSource.length
+      }
+    }
+
+    const visible = ref(false);
+
+    const hide = () => {
+      filterList();
+      visible.value = false;
+    };
     getList();
 
     return {
@@ -147,11 +181,16 @@ export default defineComponent({
       dataSource,
       handleAdd,
       handleDelete,
-      count,
       rowSelection,
       addParentData,
       modalVisible,
       getUpdateData,
+      pagination,
+      scrollY,
+      visible,
+      hide,
+      searchInput,
+      filterList
     };
   },
 });

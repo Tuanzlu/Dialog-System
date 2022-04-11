@@ -5,6 +5,6 @@ module.exports = defineConfig({
   devServer: {
     proxy: 'http://10.198.21.128:8888'
   },
-  assetsDir: 'static',
-  publicPath: './'
+  // assetsDir: 'static',
+  // publicPath: './'
 });
