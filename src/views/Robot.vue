@@ -3,7 +3,7 @@
 
   <div class="container">
     <div class="dialog-window">
-      <div class="main-window">
+      <div class="main-window" id="main-window">
         <div class="one-dialog" v-for="(dialog, index) in dialogs" :key="index">
           <div v-if="dialog.user" class="right-dialog">
             <div class="bubble-tail-right">
@@ -33,8 +33,10 @@
 </template>
 
 <script>
-import { reactive, ref } from "vue";
+import { onMounted, onUpdated, reactive, ref } from "vue";
 import HeaderNav from "@/components/HeaderNav.vue";
+import { postData } from "@/api/webpost";
+import path from "@/api/path.js";
 
 export default {
   components: { HeaderNav },
@@ -48,10 +50,30 @@ export default {
       },
     ]);
 
+    function getResponse() {
+      let params = {
+        query: inputValue.value,
+      };
+      //调用封装的postData函数，获取服务器返回值
+      let url = path.website.getDialogResponse;
+      postData(url, params).then((res) => {
+        console.log(res);
+        dialogs.push({ robot: res.res, user: inputValue.value });
+        inputValue.value = "";
+      });
+    }
+    let mainWindow = ref()
+    onMounted(() => {
+      mainWindow = document.getElementById("main-window");
+    });
+
+    onUpdated(()=>{
+      mainWindow.scrollTop = mainWindow.scrollHeight
+
+    })
     function inputMethod() {
-      console.log(inputValue.value);
-      dialogs.push({ robot: "test", user: inputValue.value });
-      inputValue.value = "";
+      getResponse();
+      
     }
 
     return {
@@ -93,7 +115,7 @@ export default {
 }
 .input {
   border-radius: 10px;
-  margin-right:10px;
+  margin-right: 10px;
 }
 .btn {
   height: 35px;
@@ -108,7 +130,7 @@ export default {
 }
 .bubble-tail-left {
   /* position: absolute; */
-  width: 200px;
+  width: 250px;
   padding: 10px;
   min-height: 50px;
   border-radius: 10px;

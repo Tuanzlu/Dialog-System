@@ -8,7 +8,8 @@ let path = {
     getIntent: Ip.productIP + "get_intent",
     saveSlot: Ip.productIP + "get_data",
     getList: Ip.productIP + "get_alldata",
-
+    deleteData: Ip.productIP + "delete_data",
+    getDialogResponse: "http://10.198.21.8:5051/user_turn"
   },
 };
 export default path;

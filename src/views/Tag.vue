@@ -11,7 +11,7 @@
         <a-button class="add-btn" type="primary" @click="handleAdd"
           >开始标注任务</a-button
         >
-        <a-button class="add-btn" @click="handleDelete" disabled
+        <a-button class="add-btn" @click="handleDelete"
           >删除标注数据</a-button
         >
         <a-popover v-model:visible="visible" title="输入标注人员ID" trigger="click">
@@ -40,9 +40,11 @@
 import HeaderNav from "@/components/HeaderNav.vue";
 import AddModal from "@/components/AddModal.vue";
 import { getData } from "@/api/webget";
+import { postData } from "@/api/webpost";
+
 import path from "@/api/path.js";
 
-import { defineComponent, computed, ref, reactive } from "vue";
+import { defineComponent, ref, reactive } from "vue";
 export default defineComponent({
   components: { HeaderNav, AddModal },
   setup() {
@@ -101,14 +103,12 @@ export default defineComponent({
     };
 
     let selectedTest = reactive([]);
-    const handleDelete = () => {
-      for (let key in selectedTest) {
-        dataSource.value = dataSource.value.filter((item) => item.key !== key);
-      }
-    };
+   
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
+        console.log(selectedRowKeys)
         selectedTest = selectedRowKeys;
+        console.log(selectedTest)
         console.log(
           `selectedRowKeys: ${selectedRowKeys}`,
           "selectedRows: ",
@@ -151,6 +151,25 @@ export default defineComponent({
         pagination.total = dataSource.dataSource.length;
       });
     }
+
+    function handleDelete() {
+      console.log(selectedTest)
+      if(selectedTest.length !== 0) {
+        deleteData()
+      }
+    }
+        function deleteData() {
+      let params = {
+        delect_timestamp_list:selectedTest
+      }
+      //调用封装的postData函数，获取服务器返回值
+      let url = path.website.deleteData;
+      postData(url, params).then((res) => {
+        console.log(res);
+        getList()
+      });
+    }
+
 
     let searchInput = ref("");
     function filterList() {
