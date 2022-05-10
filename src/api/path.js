@@ -1,15 +1,52 @@
-var LOADIP = "http://10.198.21.128:8888";
+let LOADIP = "http://10.198.21.128:8888";
 let Ip = {
   productIP: LOADIP + "/",
 };
+let faqIp = "http://10.198.22.34:35000/";
+let dialogIp = "http://10.198.21.8:5051/";
 let path = {
   website: {
-    //个人工作台
+    // diglog-tag
     getIntent: Ip.productIP + "get_intent",
     saveSlot: Ip.productIP + "get_data",
     getList: Ip.productIP + "get_alldata",
     deleteData: Ip.productIP + "delete_data",
-    getDialogResponse: "http://10.198.21.8:5051/user_turn"
+
+    // online-chatting
+    getDialogResponse: dialogIp + "user_turn",
+
+    // app
+    getAppList: faqIp + "app/list",
+    createApp: faqIp + "app/create",
+    updateApp: faqIp + "app/update",
+    deleteApp: faqIp + "app/delete",
+
+    // corpus
+    createCorpus: faqIp + "corpus/create",
+    createManyCorpus: faqIp + "corpus/create_many",
+    deleteCorpus: faqIp + "corpus/delete",
+    deleteManyCorpus: faqIp + "corpus/delete_many",
+    updateCorpus: faqIp + "corpus/update",
+    getCorpus: faqIp + "corpus/get",
+    getAllCorpus: faqIp + "corpus/get_all",
+    takeOnCorpus: faqIp + "corpus/take_on",
+    takeOffCorpus: faqIp + "corpus/take_off",
+
+    // model
+    trainModel: faqIp + "/model/train/start",
+    stateModel: faqIp + "/model/train/state",
+    updateModelAuto: faqIp + "/model/auto_train/update",
+    updateModelParam: faqIp + "/model/train_para/update",
+    replyModel: faqIp + "/model/reply",
+    getModelThreshold: faqIp + "/model/get_threshold",
+    setModelThreshold: faqIp + "/model/set_threshold",
+    reloadModel: faqIp + "/model/reload",
+    updateModelChitchat: faqIp + "/model/chitchat/update",
+    updateModelSensitive: faqIp + "/model/sensitive/update",
+    deployModel: faqIp + "/model/deploy",
+
+
+
   },
 };
 export default path;

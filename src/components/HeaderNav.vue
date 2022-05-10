@@ -5,7 +5,7 @@
   </div>
   <a-menu style="justify-content:flex-end;" :selectedKeys="curPage" mode="horizontal" @click="changePage">
       <a-menu-item key="index">首页</a-menu-item>
-      <a-menu-item key="user">用户管理</a-menu-item>
+      <a-menu-item key="faq">FAQ问答管理</a-menu-item>
       <a-menu-item key="robot">在线聊天机器人</a-menu-item>
       <a-menu-item key="tag">在线对话标注</a-menu-item>
     </a-menu>
