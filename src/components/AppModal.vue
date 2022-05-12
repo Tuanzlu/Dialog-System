@@ -44,13 +44,14 @@
           <a-form-item name="video" label="视频通话">
             <a-switch v-model:checked="formState.video" />
           </a-form-item>
-        </a-form>
+       
         <a-form-item>
           <a-button class="btn" @click="createApp" type="primary">确认</a-button>
           <a-button class="btn" @click="resetForm" type="default"
             >取消</a-button
           >
         </a-form-item>
+         </a-form>
       </div>
     </a-modal>
   </div>

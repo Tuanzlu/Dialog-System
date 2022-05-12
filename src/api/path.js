@@ -3,7 +3,7 @@ let Ip = {
   productIP: LOADIP + "/",
 };
 let faqIp = "http://10.198.22.34:35000/";
-let dialogIp = "http://10.198.21.8:5051/";
+let dialogIp = "http://10.198.21.8:36100/";
 let path = {
   website: {
     // diglog-tag
@@ -13,7 +13,7 @@ let path = {
     deleteData: Ip.productIP + "delete_data",
 
     // online-chatting
-    getDialogResponse: dialogIp + "user_turn",
+    getDialogResponse: dialogIp + "senseauto/dialog",
 
     // app
     getAppList: faqIp + "app/list",
@@ -33,17 +33,17 @@ let path = {
     takeOffCorpus: faqIp + "corpus/take_off",
 
     // model
-    trainModel: faqIp + "/model/train/start",
-    stateModel: faqIp + "/model/train/state",
-    updateModelAuto: faqIp + "/model/auto_train/update",
-    updateModelParam: faqIp + "/model/train_para/update",
-    replyModel: faqIp + "/model/reply",
-    getModelThreshold: faqIp + "/model/get_threshold",
-    setModelThreshold: faqIp + "/model/set_threshold",
-    reloadModel: faqIp + "/model/reload",
-    updateModelChitchat: faqIp + "/model/chitchat/update",
-    updateModelSensitive: faqIp + "/model/sensitive/update",
-    deployModel: faqIp + "/model/deploy",
+    trainModel: faqIp + "model/train/start",
+    stateModel: faqIp + "model/train/state",
+    updateModelAuto: faqIp + "model/auto_train/update",
+    updateModelParam: faqIp + "model/train_para/update",
+    replyModel: faqIp + "model/reply",
+    getModelThreshold: faqIp + "model/get_threshold",
+    setModelThreshold: faqIp + "model/set_threshold",
+    reloadModel: faqIp + "model/reload",
+    updateModelChitchat: faqIp + "model/chitchat/update",
+    updateModelSensitive: faqIp + "model/sensitive/update",
+    deployModel: faqIp + "model/deploy",
 
 
 

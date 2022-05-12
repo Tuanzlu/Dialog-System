@@ -11,12 +11,18 @@
         <a-button class="add-btn" type="primary" @click="handleAdd"
           >开始标注任务</a-button
         >
-        <a-button class="add-btn" @click="handleDelete"
-          >删除标注数据</a-button
+        <a-button class="add-btn" @click="handleDelete">删除标注数据</a-button>
+        <a-popover
+          v-model:visible="visible"
+          title="输入标注人员ID"
+          trigger="click"
         >
-        <a-popover v-model:visible="visible" title="输入标注人员ID" trigger="click">
           <template #content>
-            <a-input style="width:100px;margin-right:15px" @pressEnter="hide" v-model:value="searchInput"></a-input>
+            <a-input
+              style="width: 100px; margin-right: 15px"
+              @pressEnter="hide"
+              v-model:value="searchInput"
+            ></a-input>
             <a @click="hide">确定</a>
           </template>
           <a-button class="add-btn">筛选数据</a-button>
@@ -103,12 +109,12 @@ export default defineComponent({
     };
 
     let selectedTest = reactive([]);
-   
+
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log(selectedRowKeys)
+        console.log(selectedRowKeys);
         selectedTest = selectedRowKeys;
-        console.log(selectedTest)
+        console.log(selectedTest);
         console.log(
           `selectedRowKeys: ${selectedRowKeys}`,
           "selectedRows: ",
@@ -153,23 +159,22 @@ export default defineComponent({
     }
 
     function handleDelete() {
-      console.log(selectedTest)
-      if(selectedTest.length !== 0) {
-        deleteData()
+      console.log(selectedTest);
+      if (selectedTest.length !== 0) {
+        deleteData();
       }
     }
-        function deleteData() {
+    function deleteData() {
       let params = {
-        delect_timestamp_list:selectedTest
-      }
+        delect_timestamp_list: selectedTest,
+      };
       //调用封装的postData函数，获取服务器返回值
       let url = path.website.deleteData;
       postData(url, params).then((res) => {
         console.log(res);
-        getList()
+        getList();
       });
     }
-
 
     let searchInput = ref("");
     function filterList() {
@@ -177,13 +182,13 @@ export default defineComponent({
         dataSource.dataSource = alldataList;
       } else {
         dataSource.dataSource = alldataList.filter((item) => {
-          if(item.labeler_id === searchInput.value){
-            return true
-          }else {
-            return false
+          if (item.labeler_id === searchInput.value) {
+            return true;
+          } else {
+            return false;
           }
         });
-        pagination.total = dataSource.dataSource.length
+        pagination.total = dataSource.dataSource.length;
       }
     }
 
@@ -209,7 +214,7 @@ export default defineComponent({
       visible,
       hide,
       searchInput,
-      filterList
+      filterList,
     };
   },
 });
