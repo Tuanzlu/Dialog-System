@@ -11,7 +11,7 @@
             </div>
             <div class="triangle-right"></div>
           </div>
-          <div class="left-dialog">
+          <div class="left-dialog" v-if="dialog.robot">
             <div class="triangle-left"></div>
             <div class="bubble-tail-left">{{ dialog.robot }}</div>
           </div>
@@ -38,6 +38,8 @@ import HeaderNav from "@/components/HeaderNav.vue";
 import { postData } from "@/api/webpost";
 import path from "@/api/path.js";
 
+
+
 export default {
   components: { HeaderNav },
   setup() {
@@ -45,12 +47,14 @@ export default {
 
     const dialogs = reactive([
       {
-        robot: "Hi, I'm sense Hi, let's talk!",
+        robot: "您好，我是商汤智能汽车助手小糖，请问有什么可以帮您～",
         user: "",
       },
     ]);
 
     function getResponse() {
+     dialogs.push({ robot:"", user: inputValue.value });
+     
       let params = {
         query: inputValue.value,
       };
@@ -58,22 +62,20 @@ export default {
       let url = path.website.getDialogResponse;
       postData(url, params).then((res) => {
         console.log(res);
-        dialogs.push({ robot: res.res, user: inputValue.value });
+        dialogs[dialogs.length-1].robot = res.dialog_history[1].System;
         inputValue.value = "";
       });
     }
-    let mainWindow = ref()
+    let mainWindow = ref();
     onMounted(() => {
       mainWindow = document.getElementById("main-window");
     });
 
-    onUpdated(()=>{
-      mainWindow.scrollTop = mainWindow.scrollHeight
-
-    })
+    onUpdated(() => {
+      mainWindow.scrollTop = mainWindow.scrollHeight;
+    });
     function inputMethod() {
       getResponse();
-      
     }
 
     return {

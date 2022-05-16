@@ -34,7 +34,7 @@
             <a @click="editApp(item.app_id)" class="action-a">编辑</a>
 
             <a-popconfirm
-              title="Are you sure delete this app?"
+              :title="popTitle"
               ok-text="Yes"
               cancel-text="No"
               @confirm="deleteApp(item.app_id)"
@@ -81,6 +81,7 @@ export default defineComponent({
     const applicationList = reactive({
       applicationList: [],
     });
+    let popTitle = `确认删除所选应用吗?（删除后将不保留相关问答信息）`
     const router = useRouter();
     function getAppList() {
       console.log("get app list");
@@ -152,6 +153,7 @@ export default defineComponent({
       addParentData1,
       addParentData2,
       editAppId,
+      popTitle
     };
   },
 });

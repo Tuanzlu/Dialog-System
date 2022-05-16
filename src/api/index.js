@@ -26,7 +26,6 @@ function filterNull (o) {
 
 /**添加headers,可以动态添加header参数*/
 function setHeaders(headers){
-  axios.defaults.headers.school_id = headers.school_id;
   axios.defaults.headers.token = headers.token;
 };
   
@@ -46,7 +45,9 @@ function apiAxios (method, url,headers, params, success, failure) {
     data: method === 'POST' || method === 'PUT' ? params : null,
     params: method === 'GET' || method === 'DELETE' ? params : null,
     // baseURL: root,
-    withCredentials: false
+    withCredentials: false,
+    crossDomain: true
+
   })
     .then(function (res) {
       if (res.data) {

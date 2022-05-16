@@ -3,7 +3,9 @@
   <div class="container">
     <div class="breadcrumb">
       <a-breadcrumb>
-        <a-breadcrumb-item style="font-size: 16px">FAQ问答管理</a-breadcrumb-item>
+        <a-breadcrumb-item style="font-size: 16px"
+          >FAQ问答管理</a-breadcrumb-item
+        >
         <a-breadcrumb-item style="font-size: 16px"
           ><a @click="toIndex">应用列表</a></a-breadcrumb-item
         >
@@ -46,7 +48,11 @@
               <a-button type="primary">导入</a-button>
             </template>
           </a-modal>
-          <a-button @click="exportFile" style="margin: 0 5px" type="primary"
+          <a-button
+            disabled
+            @click="exportFile"
+            style="margin: 0 5px"
+            type="primary"
             >导出</a-button
           >
           <a-button @click="trainModel" style="margin: 0 5px" type="primary"
@@ -56,13 +62,14 @@
             @click="toTrainHistory"
             style="margin: 0 25px 0 5px"
             type="primary"
+            disabled
             >训练记录</a-button
           >
         </div>
       </div>
       <div class="main-body">
         <div class="left-body">
-          <div class="upper">
+          <!-- <div class="upper">
             <a-button @click="showAllType" :type="onAllType === true?'primary':'default'">全部分类</a-button>
             <a-button @click="showNoType" :type="onAllType === false?'primary':'default'">未分类</a-button>
           </div>
@@ -98,30 +105,36 @@
               </a-tree>
             </div>
           </div>
-          <div class="tag-tree"></div>
+          <div class="tag-tree"></div> -->
         </div>
         <div class="right-body">
           <div class="right-upper">
-            <div><a-input-search
-              v-model:value="value"
-              placeholder="input search text"
-              style="width: 200px"
-              @search="onSearch"
-            /></div>
-            
+            <div>
+              <a-input-search
+                v-model:value="searchWord"
+                placeholder="请输入关键字"
+                style="width: 200px"
+                @search="onSearch"
+              />
+            </div>
+
             <div class="right-btn-bar">
               <a-button
                 style="margin: 0 5px"
                 type="primary"
                 @click="createCorpus"
-                >新增标准问题</a-button
+                ><plus-circle-outlined />新增标准问题</a-button
               >
-              <a-button
-                @click="handleDelete"
-                style="margin: 0 0 0 5px"
-                type="default"
-                >删除已选问题</a-button
+              <a-popconfirm
+                title="是否确定删除？"
+                ok-text="Yes"
+                cancel-text="No"
+                @confirm="handleDelete"
               >
+                <a-button style="margin: 0 0 0 5px" type="default"
+                  >删除已选问题</a-button
+                >
+              </a-popconfirm>
             </div>
           </div>
 
@@ -132,10 +145,39 @@
               :row-selection="rowSelection"
               :row-key="(record) => record._id"
               :pagination="pagination"
-              :data-source="dataSource.dataSource"
+              :data-source="faqList.faqList"
               :columns="columns"
               :scroll="scrollY"
+              @change="tableChange"
             >
+              <template #bodyCell="{ column, record }">
+                <template v-if="column.key === 'action'">
+                  <a style="margin: 0 5px 0 0" @click="editCorpus(record._id)"
+                    >编辑</a
+                  >
+                  <a
+                    style="margin: 0 5px"
+                    v-if="record.on_stage === 1"
+                    @click="takeOffCorpus(record)"
+                    >下架</a
+                  >
+                  <a style="margin: 0 5px" v-else @click="takeOnCorpus(record)"
+                    >上架</a
+                  >
+                  <a-popconfirm
+                    title="是否确定删除？"
+                    ok-text="Yes"
+                    cancel-text="No"
+                    @confirm="deleteOneCorpus(record)"
+                  >
+                    <a style="margin: 0 0 0 5px">删除</a>
+                  </a-popconfirm>
+                </template>
+                <template v-else-if="column.key === 'on_stage'">
+                  <span v-if="record.on_stage === 1">上架</span>
+                  <span v-else>下架</span>
+                </template>
+              </template>
             </a-table>
           </div>
         </div>
@@ -155,11 +197,18 @@
     </div>
   </div>
   <add-corpus
+    :id="appId"
     :visible="addCorpusVis"
     @closeAddCorpus="getAddCorpusData"
-    @updateData="updateList"
+    @updateData="updataList"
   ></add-corpus>
-  <!-- <edit-corpus :visible="editCorpusVis" :closeEditCorpus="getEditCorpusData" :updateData="updateList"></edit-corpus> -->
+  <edit-corpus
+    :id="appId"
+    :doc="editDocId"
+    :visible="editCorpusVis"
+    @closeEditCorpus="getEditCorpusData"
+    @updateData="updataList"
+  ></edit-corpus>
 </template>
 <script>
 import HeaderNav from "@/components/HeaderNav.vue";
@@ -219,23 +268,30 @@ export default defineComponent({
     PlusCircleOutlined,
   },
   setup() {
-    let typeData = reactive({treeData:treeData})
+    let searchWord = ref("");
+    let typeData = reactive({ treeData: treeData });
     let onAllType = ref(true);
     let onAllTag = ref(true);
+    let allFaq = [];
     let modifyType = ref(false);
     let modifyTag = ref(false);
     const expandedKeys = ref(["0-0-0", "0-0-1"]);
     const selectedKeys = ref(["0-0-0", "0-0-1"]);
     let showHistory = ref(false);
     let scrollY = reactive({ y: document.body.offsetHeight - 365 });
+    const faqList = reactive({
+      faqList: [],
+    });
     const pagination = reactive({
-      total: 100,
+      total: faqList.faqList.length,
       showTotal: (total) => `共 ${total} 条`,
       pageSize: 20,
+      showSizeChanger: false,
       showQuickJumper: true,
     });
     let addCorpusVis = ref(false);
     let editCorpusVis = ref(false);
+    let editDocId = ref();
     let testModelVis = ref(false);
     let importFileVis = ref(false);
     const columns = [
@@ -243,16 +299,24 @@ export default defineComponent({
         title: "标准问题",
         dataIndex: "query",
         key: "query",
+        width: "25%",
       },
       {
         title: "状态",
         dataIndex: "on_stage",
         key: "on_stage",
+        width: "15%",
       },
       {
         title: "更新时间",
         dataIndex: "update_time",
         key: "update_time",
+        width: "30%",
+      },
+      {
+        title: "操作",
+        key: "action",
+        width: "30%",
       },
     ];
     const historyColumns = [
@@ -273,15 +337,11 @@ export default defineComponent({
       },
     ];
     const hisDataSource = reactive({ dataSource: [] });
-    const dataSource = reactive({ dataSource: [] });
     const current = ref(["mail"]);
     const route = useRoute();
     const router = useRouter();
-    const faqList = reactive({
-      faqList: [],
-    });
+
     const appId = route.params.id;
-    console.log(appId);
     getFAQList();
     let selectedTest = reactive([]);
 
@@ -304,26 +364,26 @@ export default defineComponent({
     }
 
     function getFAQList() {
-      console.log("get faq list");
       let params = {
         app_id: appId,
       };
       let url = path.website.getAllCorpus;
       getData(url, params).then((res) => {
         console.log(res);
-        dataSource.dataSource = res.results;
-        pagination.total = dataSource.dataSource.length;
+        faqList.faqList = res.results;
+        allFaq = res.results;
+        pagination.total = faqList.faqList.length;
       });
     }
 
     let getAddCorpusData = (visible) => {
       addCorpusVis.value = visible;
     };
-    // function getEditCorpusData(visible) {
-    //   editCorpusVis.value = visible;
-    // }
+    let getEditCorpusData = (visible) => {
+      editCorpusVis.value = visible;
+    };
 
-    function updateList() {
+    function updataList(flag) {
       getFAQList();
     }
 
@@ -332,16 +392,28 @@ export default defineComponent({
         deleteCorpus();
       }
     }
-
+    function deleteOneCorpus(record) {
+      let params = {
+        app_id: appId,
+        docid: record._id,
+      };
+      let url = path.website.deleteCorpus;
+      postData(url, params).then((res) => {
+        if (res.explain.indexOf("success") !== -1) {
+          message.success(res.explain);
+          getFAQList();
+        } else {
+          message.error(res.explain);
+        }
+      });
+    }
     function deleteCorpus() {
-      console.log("deleteCorpus");
       let params = {
         app_id: appId,
         docid_list: selectedTest,
       };
       let url = path.website.deleteManyCorpus;
       postData(url, params).then((res) => {
-        console.log(res);
         if (res.explain.indexOf("success") !== -1) {
           message.success(res.explain);
           getFAQList();
@@ -353,11 +425,11 @@ export default defineComponent({
 
     function createCorpus() {
       addCorpusVis.value = true;
-      console.log("createCorpus");
     }
 
-    function editCorpus() {
-      console.log("edit corpus");
+    function editCorpus(i) {
+      editDocId.value = i;
+      editCorpusVis.value = true;
     }
 
     function handleTest() {
@@ -368,7 +440,6 @@ export default defineComponent({
       testModelVis.value = false;
     }
     function testModel() {
-      console.log("testModel");
       let url = path.website.testModel;
       let params = {
         testFile: undefined,
@@ -406,48 +477,83 @@ export default defineComponent({
     }
 
     function onSearch() {
-      console.log("onsearch");
+      if (searchWord.value === "") {
+        faqList.faqList = allFaq;
+      } else {
+        faqList.faqList = allFaq.filter((item) => {
+          if (item.query.indexOf(searchWord.value) !== -1) {
+            return true;
+          } else {
+            return false;
+          }
+        });
+      }
+      pagination.total = faqList.faqList.length;
     }
 
     function showAllType() {
       onAllType.value = true;
-      
     }
     function showNoType() {
       onAllType.value = false;
-      console.log(onAllType.value)
+      console.log(onAllType.value);
     }
 
     function addNewType() {
       console.log("addNewType");
       let len = typeData.treeData.length;
-      typeData.treeData.push(
-        {
-          title:"newType",
-          key: "0-"+len.toString(),
-          children:[]
-        }
-      )
+      typeData.treeData.push({
+        title: "newType",
+        key: "0-" + len.toString(),
+        children: [],
+      });
     }
 
     function addNewTag() {
       console.log("addNewType");
       let len = treeData.length;
-      treeData.push(
-        {
-          title:"newType",
-          key: "0-"+len.toString(),
-          children:[]
-        }
-      )
+      treeData.push({
+        title: "newType",
+        key: "0-" + len.toString(),
+        children: [],
+      });
+    }
+
+    function takeOnCorpus(record) {
+      let url = path.website.takeOnCorpus;
+      let params = {
+        app_id: appId,
+        docid: record._id,
+      };
+      postData(url, params).then((res) => {
+        console.log(res);
+        record.on_stage = 1;
+      });
+    }
+
+    function takeOffCorpus(record) {
+      let url = path.website.takeOffCorpus;
+      let params = {
+        app_id: appId,
+        docid: record._id,
+      };
+      postData(url, params).then((res) => {
+        console.log(res);
+        record.on_stage = 0;
+      });
     }
 
     function modifyTypeTree() {
       modifyType.value = !modifyType.value;
     }
-     function modifyTagTree() {
+    function modifyTagTree() {
       modifyTag.value = !modifyTag.value;
     }
+
+    function tableChange(info) {
+      console.log(info);
+    }
+
     watch(expandedKeys, () => {
       console.log("expandedKeys", expandedKeys);
     });
@@ -456,19 +562,22 @@ export default defineComponent({
     });
 
     return {
+      appId,
       faqList,
       toIndex,
       current,
-      dataSource,
       columns,
       rowSelection,
       pagination,
       scrollY,
       addCorpusVis,
+      editCorpusVis,
       getAddCorpusData,
-      updateList,
+      getEditCorpusData,
+      updataList,
       createCorpus,
       handleDelete,
+      deleteOneCorpus,
       editCorpus,
       handleTest,
       trainModel,
@@ -494,8 +603,12 @@ export default defineComponent({
       modifyTypeTree,
       modifyTagTree,
       modifyTag,
-      modifyType
-
+      modifyType,
+      searchWord,
+      takeOnCorpus,
+      takeOffCorpus,
+      editDocId,
+      tableChange,
     };
   },
 });
@@ -538,7 +651,7 @@ export default defineComponent({
   width: 950px;
   margin: auto;
   display: flex;
-
+  min-height: 380px;
   justify-content: space-between;
 }
 .left-body {
