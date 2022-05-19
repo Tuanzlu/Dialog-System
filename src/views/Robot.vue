@@ -24,8 +24,12 @@
           placeholder="请输入您想说的话"
           @pressEnter="inputMethod"
         ></a-input>
-        <a-button class="btn" type="primary" @click="inputMethod"
-          >Enter</a-button
+        <a-button
+          :disabled="inputValue === ''"
+          class="btn"
+          type="primary"
+          @click="inputMethod"
+          >发送</a-button
         >
       </div>
     </div>
@@ -37,14 +41,13 @@ import { onMounted, onUpdated, reactive, ref } from "vue";
 import HeaderNav from "@/components/HeaderNav.vue";
 import { postData } from "@/api/webpost";
 import path from "@/api/path.js";
-
-
+import { message } from "ant-design-vue";
 
 export default {
   components: { HeaderNav },
   setup() {
     let inputValue = ref("");
-
+    let session = Date.now();
     const dialogs = reactive([
       {
         robot: "您好，我是商汤智能汽车助手小糖，请问有什么可以帮您～",
@@ -53,18 +56,23 @@ export default {
     ]);
 
     function getResponse() {
-     dialogs.push({ robot:"", user: inputValue.value });
-     
-      let params = {
-        query: inputValue.value,
-      };
-      //调用封装的postData函数，获取服务器返回值
-      let url = path.website.getDialogResponse;
-      postData(url, params).then((res) => {
-        console.log(res);
-        dialogs[dialogs.length-1].robot = res.dialog_history[1].System;
-        inputValue.value = "";
-      });
+      if (inputValue.value === "") {
+        message.info("请输入您想说的话");
+      } else {
+        dialogs.push({ robot: "", user: inputValue.value });
+
+        let params = {
+          query: inputValue.value,
+          session: session,
+        };
+        //调用封装的postData函数，获取服务器返回值
+        let url = path.website.getDialogResponse;
+        postData(url, params).then((res) => {
+          console.log(res);
+          dialogs[dialogs.length - 1].robot = res.reply;
+          inputValue.value = "";
+        });
+      }
     }
     let mainWindow = ref();
     onMounted(() => {
@@ -151,13 +159,12 @@ export default {
 }
 .left-dialog {
   display: flex;
-
-  margin-left: 15px;
+  justify-content: flex-start;
+  padding-left: 15px;
 }
 .right-dialog {
   display: flex;
-
-  margin-left: 400px;
+  justify-content: flex-end;
 }
 .triangle-left {
   width: 0px;

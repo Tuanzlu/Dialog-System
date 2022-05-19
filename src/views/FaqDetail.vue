@@ -209,11 +209,18 @@
     @closeEditCorpus="getEditCorpusData"
     @updateData="updataList"
   ></edit-corpus>
+  <div class="chat-container">
+    <div>
+      <div class="chat-inner" @click="openChatModal">对话测试</div>
+    </div>
+  </div>
+  <dialog-modal :app_id="appId" :visible="chatModalVis" @closeChatModal="getChatModalData"></dialog-modal>
 </template>
 <script>
 import HeaderNav from "@/components/HeaderNav.vue";
 import AddCorpus from "@/components/AddCorpus.vue";
 import EditCorpus from "@/components/EditCorpus.vue";
+import DialogModal from "@/components/DialogModal.vue";
 import { defineComponent, watch, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { postData } from "@/api/webpost";
@@ -266,6 +273,7 @@ export default defineComponent({
     EditOutlined,
     CloseCircleOutlined,
     PlusCircleOutlined,
+    DialogModal
   },
   setup() {
     let searchWord = ref("");
@@ -291,6 +299,7 @@ export default defineComponent({
     });
     let addCorpusVis = ref(false);
     let editCorpusVis = ref(false);
+    let chatModalVis = ref(false);
     let editDocId = ref();
     let testModelVis = ref(false);
     let importFileVis = ref(false);
@@ -299,7 +308,7 @@ export default defineComponent({
         title: "标准问题",
         dataIndex: "query",
         key: "query",
-        width: "25%",
+        width: "40%",
       },
       {
         title: "状态",
@@ -316,7 +325,7 @@ export default defineComponent({
       {
         title: "操作",
         key: "action",
-        width: "30%",
+        width: "20%"
       },
     ];
     const historyColumns = [
@@ -382,6 +391,9 @@ export default defineComponent({
     let getEditCorpusData = (visible) => {
       editCorpusVis.value = visible;
     };
+    let getChatModalData = (visible) => {
+      chatModalVis.value = visible;
+    };
 
     function updataList(flag) {
       getFAQList();
@@ -425,6 +437,9 @@ export default defineComponent({
 
     function createCorpus() {
       addCorpusVis.value = true;
+    }
+    function openChatModal() {
+      chatModalVis.value = true;
     }
 
     function editCorpus(i) {
@@ -609,6 +624,9 @@ export default defineComponent({
       takeOffCorpus,
       editDocId,
       tableChange,
+      chatModalVis,
+      getChatModalData,
+      openChatModal
     };
   },
 });
@@ -656,9 +674,10 @@ export default defineComponent({
 }
 .left-body {
   width: 300px;
+  display: none;
 }
 .right-body {
-  width: 600px;
+  width:100%;
 }
 .right-upper {
   display: flex;
@@ -709,5 +728,18 @@ export default defineComponent({
   width: 100%;
   display: flex;
   justify-content: space-between;
+}
+.chat-container {
+      position: fixed;
+    z-index: 99;
+    bottom: 0;
+    right: 0;
+}
+.chat-inner {
+      cursor: pointer;
+    width: 34px;
+    padding: 4px 10px;
+    line-height: 1.4;
+    border: 1px solid #ddd;
 }
 </style>
