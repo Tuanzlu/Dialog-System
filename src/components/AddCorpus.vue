@@ -47,7 +47,6 @@
               >
                 <a-select
                   v-model:value="formState.category"
-               
                   style="width: 100%"
                   placeholder="请输入分类"
                   :options="categoryOptions"
@@ -100,6 +99,7 @@
                   </template>
                   <div style="display: flex">
                     <a-textarea
+                      style="resize: none"
                       :rows="4"
                       placeholder="请输入展示文本"
                       v-model:value="item.text.content"
@@ -127,6 +127,7 @@
                   </template>
                   <div style="display: flex">
                     <a-textarea
+                      style="resize: none"
                       :rows="4"
                       placeholder="请输入语音播报"
                       v-model:value="item.audio.content"
@@ -157,7 +158,12 @@
                       :before-upload="beforeUpload"
                       @change="handleChange"
                     >
-                      <img @click="getCurImage(i)" v-if="imageUrl" :src="imageUrl" alt="avatar" />
+                      <img
+                        @click="getCurImage(i)"
+                        v-if="imageUrl"
+                        :src="imageUrl"
+                        alt="avatar"
+                      />
                       <div v-else @click="getCurImage(i)">
                         <loading-outlined v-if="loading"></loading-outlined>
                         <plus-outlined v-else></plus-outlined>
@@ -258,14 +264,14 @@ export default defineComponent({
       // },
     ]);
     const categoryOptions = ref([
-    //   {
-    //     value: "a",
-    //     label: "a",
-    //   },
-    //   {
-    //     value: "b",
-    //     label: "b",
-    //   },
+      //   {
+      //     value: "a",
+      //     label: "a",
+      //   },
+      //   {
+      //     value: "b",
+      //     label: "b",
+      //   },
     ]);
     const formRef = ref();
     const formState = reactive({
@@ -302,7 +308,7 @@ export default defineComponent({
             item.image.show = item.image.show === true ? 1 : 0;
             return item;
           });
-          let augmentation = [formState.augmentation.split('\n')];
+          let augmentation = [formState.augmentation.split("\n")];
           let params = {
             app_id: appId,
             document: {
@@ -326,7 +332,6 @@ export default defineComponent({
               context.emit("updateData", true);
               message.success("create new corpus successfully!");
               resetForm();
-              
             }
           });
         }
@@ -364,7 +369,6 @@ export default defineComponent({
     }
 
     function resetForm() {
-      
       context.emit("closeAddCorpus", false);
       formState.query = "";
       formState.augmentation = "";
@@ -372,13 +376,13 @@ export default defineComponent({
       formState.label = [];
       answer_list.answer_list = [];
       let answer_item = {
-      text: { content: "", show: true },
-      audio: { content: "", show: true },
-      image: { content: "", show: true },
-      start_time: "",
-      end_time: "",
-    };
-    answer_list.answer_list.push(answer_item);
+        text: { content: "", show: true },
+        audio: { content: "", show: true },
+        image: { content: "", show: true },
+        start_time: "",
+        end_time: "",
+      };
+      answer_list.answer_list.push(answer_item);
       vis.value = false;
     }
 
@@ -465,7 +469,7 @@ export default defineComponent({
       deleteOneAnswer,
       onChange,
       onOk,
-      getCurImage
+      getCurImage,
     };
   },
 });

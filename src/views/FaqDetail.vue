@@ -9,13 +9,26 @@
         <a-breadcrumb-item style="font-size: 16px"
           ><a @click="toIndex">应用列表</a></a-breadcrumb-item
         >
-        <a-breadcrumb-item style="font-size: 16px">FAQ</a-breadcrumb-item>
+        <a-breadcrumb-item style="font-size: 16px">FAQ(主动流程最多一个)</a-breadcrumb-item>
       </a-breadcrumb>
     </div>
-    <!-- <div class="submenu-bar">
-      <a-menu v-model:openKeys="openKeys"
-      v-model:selectedKeys="selectedKeys"></a-menu>
-    </div> -->
+    <div class="submenu-bar">
+      <a-menu  @click="handleClick"
+      v-model:selectedKeys="selectedKeys" mode="horizontal">
+      <a-sub-menu key="sub1">
+        <template #title>问答管理</template>
+        <a-menu-item key="faq">
+          FAQ
+        </a-menu-item>
+      </a-sub-menu>
+      <a-sub-menu key="sub2">
+        <template #title>多轮对话</template>
+        <a-menu-item key="flow">
+          流程管理
+        </a-menu-item>
+      </a-sub-menu>
+      </a-menu>
+    </div>
     <div class="ques-list" v-if="showHistory === false">
       <div class="header-bar">
         <div class="header-title">问答列表</div>
@@ -62,7 +75,6 @@
             @click="toTrainHistory"
             style="margin: 0 25px 0 5px"
             type="primary"
-            disabled
             >训练记录</a-button
           >
         </div>
@@ -284,7 +296,7 @@ export default defineComponent({
     let modifyType = ref(false);
     let modifyTag = ref(false);
     const expandedKeys = ref(["0-0-0", "0-0-1"]);
-    const selectedKeys = ref(["0-0-0", "0-0-1"]);
+    const selectedKeys = ref(['faq']);
     let showHistory = ref(false);
     let scrollY = reactive({ y: document.body.offsetHeight - 365 });
     const faqList = reactive({
@@ -569,6 +581,16 @@ export default defineComponent({
       console.log(info);
     }
 
+    const handleClick = menuInfo => {
+      console.log('click ', menuInfo);
+      if(menuInfo.key!=='faq'){
+         router.push({
+        path: `/multidialog/${appId}`,
+      });
+      }
+    };
+
+
     watch(expandedKeys, () => {
       console.log("expandedKeys", expandedKeys);
     });
@@ -626,7 +648,8 @@ export default defineComponent({
       tableChange,
       chatModalVis,
       getChatModalData,
-      openChatModal
+      openChatModal,
+      handleClick
     };
   },
 });
@@ -689,11 +712,10 @@ export default defineComponent({
   margin-bottom: 15px;
 }
 
-/* .submenu-bar {
-  margin:10px auto;
-  width:1000px;
-  height: 70px;
-} */
+.submenu-bar {
+  margin-top:10px;
+  border: 1px solid rgb(222, 222, 222);
+}
 .his-table {
   width: 600px;
 }

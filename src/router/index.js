@@ -17,6 +17,11 @@ const routes = [
     component: () => import("../views/FaqDetail.vue"),
   },
   {
+    path: "/multidialog/:id",
+    name: "multidialog",
+    component: () => import("../views/MultiDialog.vue"),
+  },
+  {
     path: "/robot",
     name: "robot",
     component: () => import("../views/Robot.vue"),

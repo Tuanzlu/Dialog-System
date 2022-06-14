@@ -2,7 +2,7 @@ let LOADIP = "http://10.198.21.128:8888";
 let Ip = {
   productIP: LOADIP + "/",
 };
-let faqIp = "http://10.198.22.34:35000/";
+let faqIp = "http://10.198.23.65:35000/";
 let dialogIp = "http://10.198.21.8:36100/";
 let path = {
   website: {
@@ -45,7 +45,15 @@ let path = {
     updateModelSensitive: faqIp + "model/sensitive/update",
     deployModel: faqIp + "model/deploy",
 
-
+    //flow
+    createFlow: faqIp + "flow/create",
+    getFlow: faqIp+"flow/get",
+    getAllFlow: faqIp + "flow/list",
+    takeOnFlow: faqIp+ "flow/take_on",
+    takeOffFlow: faqIp+ "flow/take_off",
+    deleteFlow: faqIp+ "flow/delete",
+    deleteManyFlow: faqIp+ "flow/delete_many",
+    updateFlow: faqIp + "flow/update"
 
   },
 };

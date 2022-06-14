@@ -22,6 +22,7 @@
                 :rules="[{ required: true, message: '请输入标准问题' }]"
               >
                 <a-textarea
+                style="resize:none"
                   :rows="3"
                   placeholder="请输入标准问题"
                   v-model:value="formState.query"
@@ -40,6 +41,7 @@
                 label="扩展问题"
               >
                 <a-textarea
+                style="resize:none"
                   :rows="4"
                   :placeholder="augPlace"
                   v-model:value="formState.augmentation"
@@ -104,6 +106,7 @@
                   </template>
                   <div style="display: flex">
                     <a-textarea
+                    style="resize:none"
                       :rows="4"
                       placeholder="请输入展示文本"
                       v-model:value="item.text.content"
@@ -131,6 +134,7 @@
                   </template>
                   <div style="display: flex">
                     <a-textarea
+                    style="resize:none"
                       :rows="4"
                       placeholder="请输入语音播报"
                       v-model:value="item.audio.content"

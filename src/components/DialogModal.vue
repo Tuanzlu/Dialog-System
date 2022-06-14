@@ -54,7 +54,6 @@ export default {
     app_id: String,
   },
   setup(props, context) {
-
     let inputValue = ref();
     let vis = ref(props.visible);
     let appId = props.app_id;
@@ -69,15 +68,14 @@ export default {
     onUpdated(() => {
       vis.value = props.visible;
       appId = props.app_id;
-      
     });
 
     function getReply() {
       dialogs.push({ robot: "", user: inputValue.value });
-      if(session === undefined) {
+      if (session === undefined) {
         session = Date.now();
       }
-      console.log("session",session)
+      console.log("session", session);
       let url = path.website.replyModel;
       let params = {
         app_id: appId,
@@ -87,11 +85,15 @@ export default {
         session: session,
         trace: Date.now(),
       };
+      inputValue.value = "";
 
       postData(url, params).then((res) => {
-        inputValue.value = "";
         console.log(res);
-        dialogs[dialogs.length - 1].robot = res.text;
+        if (res.text.length === 0) {
+          dialogs[dialogs.length - 1].robot = res.answer;
+        } else {
+          dialogs[dialogs.length - 1].robot = res.text;
+        }
       });
     }
 
@@ -99,19 +101,22 @@ export default {
       context.emit("closeChatModal", false);
       vis.value = false;
       session = undefined;
-      dialogs.splice(1,dialogs.length-1)
-      inputValue.value = ""
+      dialogs.splice(1, dialogs.length - 1);
+      inputValue.value = "";
     }
 
-    watch(dialogs, () => {
-      mainWindow = document.getElementById("main-window");
-      mainWindow.scrollTop = mainWindow.scrollHeight;
-     
-      
-      console.log(mainWindow);
-    },{
-      deep: true
-    });
+    watch(
+      dialogs,
+      () => {
+        mainWindow = document.getElementById("main-window");
+        mainWindow.scrollTop = mainWindow.scrollHeight;
+
+        console.log(mainWindow);
+      },
+      {
+        deep: true,
+      }
+    );
 
     return {
       vis,
@@ -178,5 +183,4 @@ export default {
   display: flex;
   justify-content: flex-start;
 }
-
 </style>
