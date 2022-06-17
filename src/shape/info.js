@@ -1,4 +1,6 @@
-import { Shape } from "@antv/x6"
+import {
+  Shape
+} from "@antv/x6"
 export default class InfoNode extends Shape.Rect {
 
 }
@@ -6,8 +8,7 @@ InfoNode.config({
   width: 260,
   height: 110,
   zIndex: 100,
-  markup: [
-    {
+  markup: [{
       tagName: 'rect',
       selector: 'body',
     },
@@ -19,8 +20,9 @@ InfoNode.config({
   attrs: {
     label: {
       text: '信息收集',
-      strokeWidth: 0.4,
-      fontSize: 12,
+      strokeWidth: 4,
+      refY: 25,
+      fontSize: 16,
     },
     body: {
       stroke: "#31d0c6",
@@ -28,12 +30,53 @@ InfoNode.config({
     },
   },
   ports: {
-    items: [
-      { group: 'port_g', id: 'p_top' },
-      { group: 'port_g', id: 'p_bottom_right' },
-      { group: 'port_g', id: 'p_bottom_left' },
+    items: [{
+        group: 'in',
+        id: 'p_top'
+      },
+      {
+        group: 'port_g',
+        id: 'p_bottom_right',
+        label: {
+          position: {
+            name: "inside"
+          }
+        },
+        attrs: {
+          text: {
+            text: '成功'
+          },
+        },
+      },
+      {
+        group: 'port_g',
+        id: 'p_bottom_left',
+        label: {
+          position: {
+            name: "inside"
+          }
+        },
+        attrs: {
+          text: {
+            text: '失败'
+          },
+        },
+      },
     ],
     groups: {
+      in: {
+        position: 'top',
+        zIndex: 1,
+        attrs: {
+          circle: {
+            r: 4,
+            magnet: true,
+            stroke: '#31d0c6',
+            strokeWidth: 2,
+            fill: '#fff'
+          }
+        }
+      },
       port_g: {
         attrs: {
           circle: {
@@ -44,7 +87,7 @@ InfoNode.config({
             fill: '#fff'
           }
         },
-        position: 'ellipseSpread'
+        position: 'bottom'
       }
     }
   },

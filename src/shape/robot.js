@@ -1,4 +1,6 @@
-import { Shape } from "@antv/x6"
+import {
+  Shape
+} from "@antv/x6"
 export default class RobotNode extends Shape.Rect {
   nodeName = '';
 }
@@ -7,9 +9,25 @@ RobotNode.config({
   height: 110,
   zIndex: 100,
   ports: {
-    items: [
-      { group: 'in', id: 'p_top' },
-      { group: 'port_g', id: 'p_bottom' },
+    items: [{
+        group: 'in',
+        id: 'p_top',
+        
+      },
+      {
+        group: 'port_g',
+        id: 'p_bottom',
+        label: {
+          position: {
+            name: "inside"
+          }
+        },
+        attrs: {
+          text: {
+            text: '未识别'
+          },
+        },
+      },
     ],
     groups: {
       in: {
@@ -40,8 +58,7 @@ RobotNode.config({
       },
     }
   },
-  markup: [
-    {
+  markup: [{
       tagName: 'rect',
       selector: 'body',
     },
@@ -53,8 +70,9 @@ RobotNode.config({
   attrs: {
     label: {
       text: '机器人说',
-      strokeWidth: 0.4,
-      fontSize: 12
+      strokeWidth: 4,
+      fontSize: 16,
+      refY: 25
     },
     body: {
       stroke: "#31d0c6",

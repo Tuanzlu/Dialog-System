@@ -1,5 +1,6 @@
 <template>
   <a-drawer
+    destroyOnClose
     title="机器人说"
     :width="560"
     v-model:visible="vis"
@@ -10,7 +11,7 @@
       <a-button type="primary" @click="onClose">确认</a-button>
     </template>
     <a-form :model="formState" name="addCorpus" id="form">
-       <a-form-item
+      <a-form-item
         style="margin-bottom: 10px"
         name="augmentation"
         label="语音播报"
@@ -61,7 +62,6 @@
         </div>
       </a-form-item>
 
-     
       <a-form-item
         style="margin-left: -10px; margin-bottom: 10px"
         name="intent"

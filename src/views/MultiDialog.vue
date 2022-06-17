@@ -9,7 +9,7 @@
         <a-breadcrumb-item style="font-size: 16px"
           ><a @click="toIndex">应用列表</a></a-breadcrumb-item
         >
-        <a-breadcrumb-item style="font-size: 16px" 
+        <a-breadcrumb-item style="font-size: 16px"
           >流程管理(主动流程最多一个)</a-breadcrumb-item
         >
       </a-breadcrumb>
@@ -103,12 +103,9 @@
     <div class="colored-square" v-else>
       <div class="header-bar">
         <div class="header-title">流程图</div>
-        <div>
-          <a-button type="primary" style="margin-right: 25px">保存</a-button>
-        </div>
       </div>
       <div class="main-body">
-        <flow-chart></flow-chart>
+        <flow-chart :flowId="lookId" :id="appId"></flow-chart>
       </div>
     </div>
   </div>
@@ -131,7 +128,7 @@
 import HeaderNav from "@/components/HeaderNav.vue";
 import FlowModal from "@/components/FlowModal.vue";
 import EditFlow from "@/components/EditFlow.vue";
-import { defineComponent, watch, reactive, ref,provide } from "vue";
+import { defineComponent, watch, reactive, ref, provide } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import path from "@/api/path.js";
 import {
@@ -139,7 +136,6 @@ import {
   CloseCircleOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons-vue";
-import { getData } from "@/api/webget";
 import { postData } from "@/api/webpost";
 import FlowChart from "@/components/FlowChart.vue";
 import { message } from "ant-design-vue";
@@ -237,13 +233,13 @@ export default defineComponent({
         );
       },
     };
-    
+
     function toIndex() {
       router.push({
         name: "faq",
       });
     }
- 
+
     function getFlowList() {
       let params = {
         app_id: appId,
@@ -264,7 +260,6 @@ export default defineComponent({
     function editFlow(id) {
       editFlowId.value = id;
       editFlowVis.value = true;
-      
     }
 
     function addParentData1(visible) {
@@ -295,7 +290,7 @@ export default defineComponent({
       let url = path.website.deleteFlow;
       postData(url, params).then((res) => {
         if (res.explain.indexOf("success") !== -1) {
-          message.success(res.explain);
+          message.success("delete successfully!");
           getFlowList();
         } else {
           message.error(res.explain);
@@ -310,7 +305,7 @@ export default defineComponent({
       let url = path.website.deleteManyFlow;
       postData(url, params).then((res) => {
         if (res.explain.indexOf("success") !== -1) {
-          message.success(res.explain);
+          message.success("delete successfully!");
           getFlowList();
         } else {
           message.error(res.explain);
@@ -367,16 +362,22 @@ export default defineComponent({
         router.push({
           path: `/faqdetail/${appId}`,
         });
-      }else{
+      } else {
+        getFlowList();
         watchFlow.value = false;
       }
     };
 
+    let lookId = ref();
+    let flowInfo = ref({});
     function lookAtFlow(record) {
       console.log(record.flow_id);
+      lookId.value = record.flow_id;
       watchFlow.value = true;
+      flowInfo.value = record;
     }
-
+    provide("flow_id", lookId);
+    provide("flow_info", flowInfo);
     watch(selectedKeys, () => {
       console.log("selectedKeys", selectedKeys);
     });
@@ -408,6 +409,7 @@ export default defineComponent({
       addParentData1,
       addParentData2,
       editFlowId,
+      lookId,
     };
   },
 });
@@ -429,7 +431,7 @@ export default defineComponent({
   display: flex;
   margin-bottom: 10px;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 .header-title {
   border-left: 4px rgb(49, 104, 224) solid;

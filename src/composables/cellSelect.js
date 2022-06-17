@@ -20,10 +20,13 @@ export default (graph,curCell) => {
       cellView.addClass(`${cell.shape}-selected`);
       removeBtnCfg = { x: 0, y: 0, offset: { x: -5, y: -5 } };
     }
-    cell.addTools({
-      name: 'button-remove', // 工具名称
-      args: removeBtnCfg // 工具对应的参数
-    });
+    if(cell.shape!=='start-node') {
+      cell.addTools({
+        name: 'button-remove', // 工具名称
+        args: removeBtnCfg // 工具对应的参数
+      });
+    }
+    
   });
 
   graph.value.on('cell:unselected', ({ cell }) => {

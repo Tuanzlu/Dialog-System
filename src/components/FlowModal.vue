@@ -92,12 +92,23 @@ export default defineComponent({
         addNewFlow();
       }
     }
-
+ function getDateStr() {
+      let n = new Date();
+      return (
+        n.toLocaleDateString().replace(/\//g, "-") +
+        " " +
+        n.toTimeString().substr(0, 8)
+      );
+    }
     function addNewFlow() {
       let params = {
         app_id: appId,
+        node_list: [],
+        edge_list: [],
         on_stage: true,
         flow_name: formState.name,
+        create_time:getDateStr(),
+        update_time:getDateStr(),
         trigger_type: formState.trigger_type===1?"extra_call": "faq"
       };
       console.log(params);
@@ -105,7 +116,7 @@ export default defineComponent({
       postData(url, params).then((res) => {
         console.log(res);
         if (res.explain.indexOf("success") != -1) {
-          message.success(res.explain);
+          message.success("create successfully!");
           context.emit("updateData", true);
           closeModal();
         } else {

@@ -64,6 +64,7 @@ import { postData } from "@/api/webpost";
 import { message } from "ant-design-vue";
 import path from "@/api/path.js";
 import { defineComponent, ref, onUpdated, reactive, inject } from "vue";
+import { getData } from "@/api/webget";
 export default defineComponent({
   props: {
     visible: Boolean,
@@ -88,6 +89,7 @@ export default defineComponent({
       name: "",
       trigger_type: "",
     });
+    let flowInfo = {};
 
     const closeModal = (e) => {
       resetForm();
@@ -103,6 +105,7 @@ export default defineComponent({
       };
       postData(url, params).then((res) => {
         console.log(res);
+        flowInfo = res.flow;
         formState.name = res.flow.flow_name;
         formState.trigger_type = res.flow.trigger_type === "faq" ? 2 : 1;
       });
@@ -117,12 +120,23 @@ export default defineComponent({
         editFlowContent();
       }
     }
-
+ function getDateStr() {
+      let n = new Date();
+      return (
+        n.toLocaleDateString().replace(/\//g, "-") +
+        " " +
+        n.toTimeString().substr(0, 8)
+      );
+    }
     function editFlowContent() {
       let params = {
         app_id:appId,
         flow_id: flow_id.value,
+        node_list: flowInfo.node_list,
+        edge_list: flowInfo.edge_list,
         flow_name: formState.name,
+        create_time: flowInfo.create_time,
+        update_time: getDateStr(),
         trigger_type: formState.trigger_type===1?"extra_call": "faq"
       };
       console.log(params);
@@ -130,8 +144,9 @@ export default defineComponent({
       postData(url, params).then((res) => {
         console.log(res);
         if (res.explain.indexOf("success") != -1) {
-          message.success(res.explain);
+          message.success("update successfully!");
           context.emit("updateData", true);
+          closeModal()
         } else {
           message.error(res.explain);
         }

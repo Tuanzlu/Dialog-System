@@ -30,7 +30,7 @@ export default defineComponent({
 
     function toIndex() {
       router.push({
-        path:'/index'
+        path:'/'
       })
     }
     return {

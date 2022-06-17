@@ -1,5 +1,6 @@
 <template>
   <a-drawer
+    destroyOnClose
     title="信息收集"
     :width="560"
     v-model:visible="vis"
@@ -70,11 +71,13 @@
       </a-form>
     </div>
     <div class="slot-list">
-      <div style="
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-          ">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
+        "
+      >
         <div>收集信息</div>
         <a>增加系统槽位</a>
       </div>
@@ -86,23 +89,31 @@
             margin-bottom: 10px;
           "
         >
-          <div style="margin-right:15px">槽位{{ i + 1 }}</div>
+          <div style="margin-right: 15px">槽位{{ i + 1 }}</div>
           <a @click="deleteOneAnswer(i)" v-if="slot_list.slot_list.length > 1">
             删除槽位
           </a>
         </div>
         <a-form :model="item" name="addCorpus" id="form">
-          <a-form-item  style="margin-left: -10px;" name="slot_name" label="槽位名称"
-           :rules="[{ required: true, message: '请选择槽位' }]">
+          <a-form-item
+            style="margin-left: -10px"
+            name="slot_name"
+            label="槽位名称"
+            :rules="[{ required: true, message: '请选择槽位' }]"
+          >
             <a-select
               v-model:value="item.slot_name"
-              style="width: 150px;"
+              style="width: 150px"
               placeholder="请选择槽位名称"
               :options="slotOptions"
             ></a-select>
           </a-form-item>
-          <a-form-item style="margin-left: -10px;margin-bottom: 10px" name="ques_text" label="追问话术"
-          :rules="[{ required: true, message: '请输入追问话术' }]">
+          <a-form-item
+            style="margin-left: -10px; margin-bottom: 10px"
+            name="ques_text"
+            label="追问话术"
+            :rules="[{ required: true, message: '请输入追问话术' }]"
+          >
             <template #extra>
               <label style="font-size: 5px">
                 支持中英文、数字、符号，长度不得超过500个字符
@@ -119,11 +130,15 @@
               </a-textarea>
             </div>
           </a-form-item>
-          <a-form-item style="margin-left: -10px;" name="ques_times" label="追问次数" 
-          :rules="[{ required: true, message: '请选择追问次数' }]">
+          <a-form-item
+            style="margin-left: -10px"
+            name="ques_times"
+            label="追问次数"
+            :rules="[{ required: true, message: '请选择追问次数' }]"
+          >
             <a-select
               v-model:value="item.ques_times"
-              style="width: 150px;"
+              style="width: 150px"
               placeholder="请选择追问次数"
               :options="timesOptions"
             ></a-select>
@@ -143,21 +158,14 @@
 </template>
 
 <script>
-import { getCurrentInstance,ref, inject, reactive } from "vue";
+import { getCurrentInstance, ref, inject, reactive } from "vue";
 import { postData } from "@/api/webpost";
 
 export default {
   setup() {
     const vis = inject("infoCollectVis");
     const slotOptions = ref([
-      {
-        value: "a",
-        label: "a",
-      },
-      {
-        value: "b",
-        label: "b",
-      },
+    
     ]);
     let timesOptions = [
       {
@@ -212,16 +220,16 @@ export default {
     });
     const slot_list = reactive({ slot_list: [] });
     let slot_item = {
-      slot_name:[],
-      ques_text:"",
-      ques_times:[]
+      slot_name: [],
+      ques_text: "",
+      ques_times: [],
     };
     slot_list.slot_list.push(slot_item);
     function plusOneAnswer() {
       let oneItem = {
-        slot_name:[],
-      ques_text:"",
-      ques_times:[]
+        slot_name: [],
+        ques_text: "",
+        ques_times: [],
       };
       slot_list.slot_list.push(oneItem);
     }
@@ -233,7 +241,7 @@ export default {
       console.log("add new slot");
     }
     const onClose = (e) => {
-      console.log(vis.value)
+      console.log(vis.value);
       vis.value = false;
     };
     return {
@@ -246,7 +254,6 @@ export default {
       plusOneAnswer,
       slot_list,
       deleteOneAnswer,
-
     };
   },
 };
@@ -275,6 +282,6 @@ export default {
   margin-top: 20px;
 }
 .slot-list {
-  margin-bottom:50px;
+  margin-bottom: 50px;
 }
 </style>

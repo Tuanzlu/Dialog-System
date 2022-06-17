@@ -1,8 +1,14 @@
 <template>
-  <a-drawer title="跳转" :width="560" v-model:visible="vis" @close="onClose">
+  <a-drawer
+    destroyOnClose
+    title="跳转"
+    :width="560"
+    v-model:visible="vis"
+    @close="onClose"
+  >
     <template #extra>
       <a-button style="margin-right: 8px" @click="onClose">取消</a-button>
-      <a-button type="primary" @click="onClose">确认</a-button>
+      <a-button type="primary" @click="hanleOk">确认</a-button>
     </template>
     <a-form :model="formState" name="addCorpus" id="form">
       <a-form-item
@@ -27,7 +33,7 @@
         </a-radio-group>
       </a-form-item>
       <a-form-item
-        v-if="formState.type!==1"
+        v-if="formState.type !== 1"
         style="margin-bottom: 10px"
         name="augmentation"
         label="语音播报"
@@ -54,7 +60,12 @@
           </a-form-item-rest>
         </div>
       </a-form-item>
-      <a-form-item v-if="formState.type!==1" style="margin-bottom: 10px" name="text" label="展示文本">
+      <a-form-item
+        v-if="formState.type !== 1"
+        style="margin-bottom: 10px"
+        name="text"
+        label="展示文本"
+      >
         <template #extra>
           <label style="font-size: 5px">
             支持中英文、数字、符号，长度不得超过500个字符
@@ -82,37 +93,39 @@
 </template>
 
 <script>
-import { getCurrentInstance, inject, reactive } from "vue";
+import { ref, inject, reactive } from "vue";
 import { postData } from "@/api/webpost";
 
 export default {
   setup() {
     const vis = inject("jumpVis");
-    let labelOptions = [
-      {
-        value: "test1",
-        label: "test1",
-      },
-      {
-        value: "test2",
-        label: "test2",
-      },
-    ];
+    const tmp = inject("tmp");
+    const graph = inject("graph")
+    console.log("in jump tmp", tmp.tmp)
+    let labelOptions = ref([]);
     const formState = reactive({
       type: "",
-      jumpTo: "",
+      jumpTo: [],
       text: { content: "", show: false },
       audio: { content: "", show: false },
     });
 
+    // 待完成 调用添加意图接口
     function handleAddNewIntent() {
       console.log("add new intent");
+    }
+
+    function handleOk() {
+    
+
+      vis.value = false;
     }
     const onClose = (e) => {
       vis.value = false;
     };
     return {
       vis,
+      handleOk,
       onClose,
       labelOptions,
       formState,

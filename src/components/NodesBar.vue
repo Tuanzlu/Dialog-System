@@ -1,17 +1,17 @@
 <template>
   <div class="nodes-bar">
     <div class="lli">
-      <div class="special-node" data-type="special-node" @mousedown="startDrag">
+      <div class="node" data-type="robot-node" @mousedown="startDrag">
         机器人说
       </div>
     </div>
     <div class="lli">
-      <div class="end-node" data-type="end-node" @mousedown="startDrag">
+      <div class="node" data-type="info-node" @mousedown="startDrag">
         信息收集
       </div>
     </div>
     <div class="lli">
-      <div class="general-node" data-type="general-node" @mousedown="startDrag">
+      <div class="node" data-type="jump-node" @mousedown="startDrag">
         跳转
       </div>
     </div>
@@ -31,14 +31,14 @@ export default {
       const target = e.currentTarget;
       const type = target.getAttribute("data-type");
       let node;
-      if (type === "general-node") {
+      if (type === "jump-node") {
         node = graph.value.createNode({
-          shape: "general-node",
+          shape: "jump-node",
         });
       }
-      if (type === "special-node") {
+      if (type === "robot-node") {
         node = graph.value.createNode({
-          shape: "special-node",
+          shape: "robot-node",
         });
       }
       node = graph.value.createNode({ shape: type });
@@ -84,20 +84,10 @@ export default {
   margin: 16px;
   cursor: move;
 }
-.general-node {
+.node {
   width: 100%;
   height: 40px;
   text-align: center;
 }
 
-.special-node {
-  width: 100%;
-  height: 40px;
-  text-align: center;
-}
-.end-node {
-  width: 100%;
-  height: 40px;
-  text-align: center;
-}
 </style>

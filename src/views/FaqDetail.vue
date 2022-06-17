@@ -343,18 +343,18 @@ export default defineComponent({
     const historyColumns = [
       {
         title: "开始时间",
-        dataIndex: "start_time",
-        key: "start_time",
+        dataIndex: "train_start_time",
+        key: "train_start_time",
       },
       {
         title: "结束时间",
-        dataIndex: "finish_time",
-        key: "finish_time",
+        dataIndex: "train_end_time",
+        key: "train_end_time",
       },
       {
         title: "状态",
-        dataIndex: "state",
-        key: "state",
+        dataIndex: "status",
+        key: "status",
       },
     ];
     const hisDataSource = reactive({ dataSource: [] });
@@ -501,6 +501,22 @@ export default defineComponent({
     function toTrainHistory() {
       console.log("toTrainHistory");
       showHistory.value = true;
+      getHistory();
+    }
+
+    function getHistory() {
+      let url = path.website.stateModel;
+      let params = {
+        app_id: appId
+      };
+      postData(url,params).then((res)=> {
+        console.log(res);
+
+        res.status = res.status===1?'训练成功':'训练失败';
+        
+
+        hisDataSource.dataSource = [res];
+      })
     }
 
     function onSearch() {
@@ -587,6 +603,8 @@ export default defineComponent({
          router.push({
         path: `/multidialog/${appId}`,
       });
+      }else {
+        showHistory.value = false;
       }
     };
 
@@ -717,7 +735,7 @@ export default defineComponent({
   border: 1px solid rgb(222, 222, 222);
 }
 .his-table {
-  width: 600px;
+  width: 950px;
 }
 
 .type-tree {

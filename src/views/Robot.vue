@@ -93,7 +93,7 @@ export default {
         } else {
           params = {
             query: inputValue.value,
-            session: session,
+            sessionId: session,
           };
         }
         //调用封装的postData函数，获取服务器返回值

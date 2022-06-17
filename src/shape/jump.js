@@ -20,8 +20,9 @@ JumpNode.config({
   attrs: {
     label: {
       text: '跳转',
-      strokeWidth: 0.4,
-      fontSize: 12,
+      strokeWidth: 4,
+      fontSize: 16,
+      refY: 25
     },
     body: {
       stroke: "#31d0c6",
