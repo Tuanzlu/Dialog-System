@@ -9,24 +9,25 @@
         <a-breadcrumb-item style="font-size: 16px"
           ><a @click="toIndex">应用列表</a></a-breadcrumb-item
         >
-        <a-breadcrumb-item style="font-size: 16px">FAQ(主动流程最多一个)</a-breadcrumb-item>
+        <a-breadcrumb-item style="font-size: 16px"
+          >FAQ(主动流程最多一个)</a-breadcrumb-item
+        >
       </a-breadcrumb>
     </div>
     <div class="submenu-bar">
-      <a-menu  @click="handleClick"
-      v-model:selectedKeys="selectedKeys" mode="horizontal">
-      <a-sub-menu key="sub1">
-        <template #title>问答管理</template>
-        <a-menu-item key="faq">
-          FAQ
-        </a-menu-item>
-      </a-sub-menu>
-      <a-sub-menu key="sub2">
-        <template #title>多轮对话</template>
-        <a-menu-item key="flow">
-          流程管理
-        </a-menu-item>
-      </a-sub-menu>
+      <a-menu
+        @click="handleClick"
+        v-model:selectedKeys="selectedKeys"
+        mode="horizontal"
+      >
+        <a-sub-menu key="sub1">
+          <template #title>问答管理</template>
+          <a-menu-item key="faq"> FAQ </a-menu-item>
+        </a-sub-menu>
+        <a-sub-menu key="sub2">
+          <template #title>多轮对话</template>
+          <a-menu-item key="flow"> 流程管理 </a-menu-item>
+        </a-sub-menu>
       </a-menu>
     </div>
     <div class="ques-list" v-if="showHistory === false">
@@ -226,7 +227,11 @@
       <div class="chat-inner" @click="openChatModal">对话测试</div>
     </div>
   </div>
-  <dialog-modal :app_id="appId" :visible="chatModalVis" @closeChatModal="getChatModalData"></dialog-modal>
+  <dialog-modal
+    :app_id="appId"
+    :visible="chatModalVis"
+    @closeChatModal="getChatModalData"
+  ></dialog-modal>
 </template>
 <script>
 import HeaderNav from "@/components/HeaderNav.vue";
@@ -285,18 +290,14 @@ export default defineComponent({
     EditOutlined,
     CloseCircleOutlined,
     PlusCircleOutlined,
-    DialogModal
+    DialogModal,
   },
   setup() {
     let searchWord = ref("");
     let typeData = reactive({ treeData: treeData });
-    let onAllType = ref(true);
-    let onAllTag = ref(true);
     let allFaq = [];
-    let modifyType = ref(false);
-    let modifyTag = ref(false);
     const expandedKeys = ref(["0-0-0", "0-0-1"]);
-    const selectedKeys = ref(['faq']);
+    const selectedKeys = ref(["faq"]);
     let showHistory = ref(false);
     let scrollY = reactive({ y: document.body.offsetHeight - 365 });
     const faqList = reactive({
@@ -337,7 +338,7 @@ export default defineComponent({
       {
         title: "操作",
         key: "action",
-        width: "20%"
+        width: "20%",
       },
     ];
     const historyColumns = [
@@ -361,29 +362,28 @@ export default defineComponent({
     const current = ref(["mail"]);
     const route = useRoute();
     const router = useRouter();
-
     const appId = route.params.id;
-    getFAQList();
     let selectedTest = reactive([]);
+    // let onAllType = ref(true);
+    // let onAllTag = ref(true);
+    // let modifyType = ref(false);
+    // let modifyTag = ref(false);
 
+    getFAQList();
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log(selectedRowKeys);
         selectedTest = selectedRowKeys;
-        console.log(selectedTest);
-        console.log(
-          `selectedRowKeys: ${selectedRowKeys}`,
-          "selectedRows: ",
-          selectedRows
-        );
       },
     };
+
+    // 前往首页
     function toIndex() {
       router.push({
         name: "faq",
       });
     }
 
+    // 获取FAQ问题列表
     function getFAQList() {
       let params = {
         app_id: appId,
@@ -397,16 +397,22 @@ export default defineComponent({
       });
     }
 
+    // 关闭新增问题drawer
     let getAddCorpusData = (visible) => {
       addCorpusVis.value = visible;
     };
+
+    // 关闭编辑问题drawer
     let getEditCorpusData = (visible) => {
       editCorpusVis.value = visible;
     };
+
+    // 关闭对话测试drawer
     let getChatModalData = (visible) => {
       chatModalVis.value = visible;
     };
 
+    // 更新数据列表
     function updataList(flag) {
       getFAQList();
     }
@@ -416,6 +422,8 @@ export default defineComponent({
         deleteCorpus();
       }
     }
+
+    // 删除一个问题
     function deleteOneCorpus(record) {
       let params = {
         app_id: appId,
@@ -431,6 +439,8 @@ export default defineComponent({
         }
       });
     }
+
+    // 批量删除问题
     function deleteCorpus() {
       let params = {
         app_id: appId,
@@ -447,13 +457,17 @@ export default defineComponent({
       });
     }
 
+    // 显示新增问题drawer
     function createCorpus() {
       addCorpusVis.value = true;
     }
+
+    // 显示对话测试
     function openChatModal() {
       chatModalVis.value = true;
     }
 
+    // 显示编辑问题界面
     function editCorpus(i) {
       editDocId.value = i;
       editCorpusVis.value = true;
@@ -463,19 +477,11 @@ export default defineComponent({
       console.log("handletest");
       testModelVis.value = true;
     }
+
     function closeTest() {
       testModelVis.value = false;
     }
-    function testModel() {
-      let url = path.website.testModel;
-      let params = {
-        testFile: undefined,
-      };
-      postData(url + "?app_id=" + appId, params).then((res) => {
-        console.log(res);
-        message.info(res.explain);
-      });
-    }
+
     function trainModel() {
       console.log("trainModel");
       let url = path.website.trainModel;
@@ -487,36 +493,37 @@ export default defineComponent({
         message.info(res.explain);
       });
     }
+
     function importFile() {
       console.log("importFile");
       importFileVis.value = true;
     }
+
     function closeImport() {
       importFileVis.value = false;
     }
+
     function exportFile() {
       console.log("exportFile");
     }
 
+    // 显示训练历史
     function toTrainHistory() {
-      console.log("toTrainHistory");
       showHistory.value = true;
       getHistory();
     }
 
+    // 获取训练记录
     function getHistory() {
       let url = path.website.stateModel;
       let params = {
-        app_id: appId
+        app_id: appId,
       };
-      postData(url,params).then((res)=> {
+      postData(url, params).then((res) => {
         console.log(res);
-
-        res.status = res.status===1?'训练成功':'训练失败';
-        
-
+        res.status = res.status === 1 ? "训练成功" : "训练失败";
         hisDataSource.dataSource = [res];
-      })
+      });
     }
 
     function onSearch() {
@@ -532,34 +539,6 @@ export default defineComponent({
         });
       }
       pagination.total = faqList.faqList.length;
-    }
-
-    function showAllType() {
-      onAllType.value = true;
-    }
-    function showNoType() {
-      onAllType.value = false;
-      console.log(onAllType.value);
-    }
-
-    function addNewType() {
-      console.log("addNewType");
-      let len = typeData.treeData.length;
-      typeData.treeData.push({
-        title: "newType",
-        key: "0-" + len.toString(),
-        children: [],
-      });
-    }
-
-    function addNewTag() {
-      console.log("addNewType");
-      let len = treeData.length;
-      treeData.push({
-        title: "newType",
-        key: "0-" + len.toString(),
-        children: [],
-      });
     }
 
     function takeOnCorpus(record) {
@@ -586,35 +565,58 @@ export default defineComponent({
       });
     }
 
-    function modifyTypeTree() {
-      modifyType.value = !modifyType.value;
-    }
-    function modifyTagTree() {
-      modifyTag.value = !modifyTag.value;
-    }
-
     function tableChange(info) {
       console.log(info);
     }
 
-    const handleClick = menuInfo => {
-      console.log('click ', menuInfo);
-      if(menuInfo.key!=='faq'){
-         router.push({
-        path: `/multidialog/${appId}`,
-      });
-      }else {
+    const handleClick = (menuInfo) => {
+      console.log("click ", menuInfo);
+      if (menuInfo.key !== "faq") {
+        router.push({
+          path: `/multidialog/${appId}`,
+        });
+      } else {
         showHistory.value = false;
       }
     };
 
+    // 注释函数为树状结构筛选标签和类型相关内容
+    // function showAllType() {
+    //   onAllType.value = true;
+    // }
 
-    watch(expandedKeys, () => {
-      console.log("expandedKeys", expandedKeys);
-    });
-    watch(selectedKeys, () => {
-      console.log("selectedKeys", selectedKeys);
-    });
+    // function showNoType() {
+    //   onAllType.value = false;
+    //   console.log(onAllType.value);
+    // }
+
+    // function addNewType() {
+    //   console.log("addNewType");
+    //   let len = typeData.treeData.length;
+    //   typeData.treeData.push({
+    //     title: "newType",
+    //     key: "0-" + len.toString(),
+    //     children: [],
+    //   });
+    // }
+
+    // function addNewTag() {
+    //   console.log("addNewType");
+    //   let len = treeData.length;
+    //   treeData.push({
+    //     title: "newType",
+    //     key: "0-" + len.toString(),
+    //     children: [],
+    //   });
+    // }
+
+    // function modifyTypeTree() {
+    //   modifyType.value = !modifyType.value;
+    // }
+
+    // function modifyTagTree() {
+    //   modifyTag.value = !modifyTag.value;
+    // }
 
     return {
       appId,
@@ -650,15 +652,6 @@ export default defineComponent({
       expandedKeys,
       selectedKeys,
       onSearch,
-      showNoType,
-      showAllType,
-      onAllType,
-      addNewType,
-      addNewTag,
-      modifyTypeTree,
-      modifyTagTree,
-      modifyTag,
-      modifyType,
       searchWord,
       takeOnCorpus,
       takeOffCorpus,
@@ -667,7 +660,17 @@ export default defineComponent({
       chatModalVis,
       getChatModalData,
       openChatModal,
-      handleClick
+      handleClick,
+      // showNoType,
+      // showAllType,
+      // onAllType,
+      // onAllTag,
+      // addNewType,
+      // addNewTag,
+      // modifyTypeTree,
+      // modifyTagTree,
+      // modifyTag,
+      // modifyType,
     };
   },
 });
@@ -718,7 +721,7 @@ export default defineComponent({
   display: none;
 }
 .right-body {
-  width:100%;
+  width: 100%;
 }
 .right-upper {
   display: flex;
@@ -731,7 +734,7 @@ export default defineComponent({
 }
 
 .submenu-bar {
-  margin-top:10px;
+  margin-top: 10px;
   border: 1px solid rgb(222, 222, 222);
 }
 .his-table {
@@ -770,16 +773,16 @@ export default defineComponent({
   justify-content: space-between;
 }
 .chat-container {
-      position: fixed;
-    z-index: 99;
-    bottom: 0;
-    right: 0;
+  position: fixed;
+  z-index: 99;
+  bottom: 0;
+  right: 0;
 }
 .chat-inner {
-      cursor: pointer;
-    width: 34px;
-    padding: 4px 10px;
-    line-height: 1.4;
-    border: 1px solid #ddd;
+  cursor: pointer;
+  width: 34px;
+  padding: 4px 10px;
+  line-height: 1.4;
+  border: 1px solid #ddd;
 }
 </style>

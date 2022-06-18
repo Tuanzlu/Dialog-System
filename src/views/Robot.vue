@@ -1,6 +1,5 @@
 <template>
   <header-nav current="robot"></header-nav>
-
   <div class="container">
     <div class="dialog-window">
       <div class="debug-bar">
@@ -12,12 +11,14 @@
       </div>
       <div class="main-window" id="main-window">
         <div class="one-dialog" v-for="(dialog, index) in dialogs" :key="index">
+           <!-- 右侧展示用户输入 -->
           <div v-if="dialog.user" class="right-dialog">
             <div class="bubble-tail-right">
               {{ dialog.user }}
             </div>
             <div class="triangle-right"></div>
           </div>
+           <!-- 左侧展示系统回复 -->
           <div class="left-dialog" v-if="dialog.robot.text">
             <div class="triangle-left"></div>
             <div class="bubble-tail-left">
@@ -64,6 +65,8 @@ export default {
     let mode = ref(false); // false为默认对话状态，true为调试状态
     let inputValue = ref("");
     let session = "";
+    let mainWindow = ref();
+    
     const dialogs = reactive([
       {
         robot: {
@@ -75,6 +78,7 @@ export default {
       },
     ]);
 
+    // 获取系统回复
     function getResponse() {
       if (inputValue.value === "") {
         message.info("请输入您想说的话");
@@ -110,14 +114,18 @@ export default {
         });
       }
     }
-    let mainWindow = ref();
+
+    // 挂载时获取聊天框元素
     onMounted(() => {
       mainWindow = document.getElementById("main-window");
     });
 
+    // 保持聊天框始终显示最新消息
     onUpdated(() => {
       mainWindow.scrollTop = mainWindow.scrollHeight;
     });
+    
+    // 处理用户输入
     function inputMethod() {
       getResponse();
     }

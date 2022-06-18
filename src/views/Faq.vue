@@ -81,43 +81,42 @@ export default defineComponent({
     const applicationList = reactive({
       applicationList: [],
     });
+      let modal1Visible = ref(false);
+    let modal2Visible = ref(false);
     let popTitle = `确认删除所选应用吗?（删除后将不保留相关问答信息）`
     const router = useRouter();
-    function getAppList() {
-      console.log("get app list");
 
+    // 获取应用列表
+    function getAppList() {
       let url = path.website.getAppList;
       getData(url).then((res) => {
-        console.log(res);
         applicationList.applicationList = res.results;
       });
     }
-    let modal1Visible = ref(false);
-    let modal2Visible = ref(false);
-
+  
+    // 显示新增应用窗口
     let createApp = () => {
-
       modal1Visible.value = true;
     };
 
+    // 更新数据列表
      function getUpdateData(flag) {
-      console.log("get update dataList");
-      console.log(flag);
       if (flag === true) {
         getAppList();
       }
     }
+
+    // 关闭新增应用窗口
     function addParentData1(visible) {
-      console.log("in parent function addData");
-      console.log(visible);
       modal1Visible.value = visible;
     }
+
+    // 关闭编辑应用窗口
      function addParentData2(visible) {
-      console.log("in parent function addData");
-      console.log(visible);
       modal2Visible.value = visible;
     }
 
+    // 删除应用
     function deleteApp(app_id) {
       let params = {
         app_id: app_id,
@@ -129,18 +128,19 @@ export default defineComponent({
       });
     }
 
+    // 显示编辑应用窗口
     function editApp(app_id) {
       modal2Visible.value = true;
       editAppId.value = app_id;
     }
 
+    // 显示当前应用的问答列表页面
     function toDetail(appid) {
       router.push({
         path: `/faqdetail/${appid}`,
       });
-      console.log(appid);
-      console.log("查看详情");
     }
+
     return {
       applicationList,
       modal1Visible,

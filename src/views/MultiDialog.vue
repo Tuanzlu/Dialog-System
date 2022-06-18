@@ -30,6 +30,7 @@
         </a-sub-menu>
       </a-menu>
     </div>
+    <!-- watchFlow为false时展示流程列表 -->
     <div class="colored-square" v-if="watchFlow === false">
       <div class="header-bar">
         <div class="right-upper">
@@ -100,15 +101,18 @@
         </a-table>
       </div>
     </div>
+    <!-- watchFlow为true时展示流程图操作页面 -->
     <div class="colored-square" v-else>
       <div class="header-bar">
         <div class="header-title">流程图</div>
       </div>
       <div class="main-body">
+        <!-- 流程图组件 -->
         <flow-chart :flowId="lookId" :id="appId"></flow-chart>
       </div>
     </div>
   </div>
+  <!-- 添加流程组件 -->
   <flow-modal
     :id="appId"
     :visible="addFlowVis"
@@ -116,6 +120,7 @@
     @addData="addParentData1"
   >
   </flow-modal>
+  <!-- 编辑流程组件 -->
   <edit-flow
     :id="appId"
     :flowId="editFlowId"
@@ -181,14 +186,6 @@ export default defineComponent({
       },
     ];
 
-    function getDateStr() {
-      let n = new Date();
-      return (
-        n.toLocaleDateString().replace(/\//g, "-") +
-        " " +
-        n.toTimeString().substr(0, 8)
-      );
-    }
     const flowData = reactive({
       dataSource: [
         {
@@ -210,27 +207,32 @@ export default defineComponent({
     });
     let allFlow = flowData.dataSource;
     let watchFlow = ref(false);
-
     let addFlowVis = ref(false);
     let editFlowVis = ref(false);
     const current = ref(["mail"]);
     const route = useRoute();
     const router = useRouter();
     const appId = route.params.id;
-
     let selectedTest = reactive([]);
+    let editFlowId = ref();
+    let lookId = ref();
+    let flowInfo = ref({});
+
     getFlowList();
+
+    // 获取当前日期字符串
+    function getDateStr() {
+      let n = new Date();
+      return (
+        n.toLocaleDateString().replace(/\//g, "-") +
+        " " +
+        n.toTimeString().substr(0, 8)
+      );
+    }
 
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log(selectedRowKeys);
         selectedTest = selectedRowKeys;
-        console.log(selectedTest);
-        console.log(
-          `selectedRowKeys: ${selectedRowKeys}`,
-          "selectedRows: ",
-          selectedRows
-        );
       },
     };
 
@@ -240,6 +242,7 @@ export default defineComponent({
       });
     }
 
+    // 获取流程列表
     function getFlowList() {
       let params = {
         app_id: appId,
@@ -253,26 +256,31 @@ export default defineComponent({
       });
     }
 
+    // 显示新建流程对话框
     function createFlow() {
       addFlowVis.value = true;
     }
-    let editFlowId = ref();
+
+    // 显示编辑流程对话框
     function editFlow(id) {
       editFlowId.value = id;
       editFlowVis.value = true;
     }
 
+    // 关闭新增流程对话框
     function addParentData1(visible) {
-      console.log("in parent function addData");
       console.log(visible);
       addFlowVis.value = visible;
     }
+
+    // 关闭编辑流程对话框
     function addParentData2(visible) {
       console.log("in parent function addData");
       console.log(visible);
       editFlowVis.value = visible;
     }
 
+    // 更新列表数据
     function updateList(flag) {
       getFlowList();
     }
@@ -282,6 +290,8 @@ export default defineComponent({
         deleteFlow();
       }
     }
+
+    // 删除一个流程
     function deleteOneFlow(record) {
       let params = {
         app_id: appId,
@@ -297,6 +307,8 @@ export default defineComponent({
         }
       });
     }
+
+    // 批量删除流程
     function deleteFlow() {
       let params = {
         app_id: appId,
@@ -313,6 +325,7 @@ export default defineComponent({
       });
     }
 
+    // 根据输入关键词筛选数据
     function onSearch() {
       if (searchWord.value === "") {
         flowData.dataSource = allFlow;
@@ -356,8 +369,8 @@ export default defineComponent({
       console.log(info);
     }
 
+    // 点击子菜单跳转操作
     const handleClick = (menuInfo) => {
-      console.log("click ", menuInfo);
       if (menuInfo.key !== "flow") {
         router.push({
           path: `/faqdetail/${appId}`,
@@ -368,19 +381,18 @@ export default defineComponent({
       }
     };
 
-    let lookId = ref();
-    let flowInfo = ref({});
+    // 查看流程图
     function lookAtFlow(record) {
       console.log(record.flow_id);
       lookId.value = record.flow_id;
       watchFlow.value = true;
       flowInfo.value = record;
     }
+
+    // 父子组件内共享数据
     provide("flow_id", lookId);
     provide("flow_info", flowInfo);
-    watch(selectedKeys, () => {
-      console.log("selectedKeys", selectedKeys);
-    });
+
     return {
       watchFlow,
       appId,

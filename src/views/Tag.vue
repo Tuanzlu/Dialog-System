@@ -7,6 +7,7 @@
       @addData="addParentData"
     ></add-modal>
     <div class="data-list">
+      <!-- 按钮操作区 -->
       <div class="btn-bar">
         <a-button class="add-btn" type="primary" @click="handleAdd"
           >开始标注任务</a-button
@@ -98,42 +99,31 @@ export default defineComponent({
     const dataSource = reactive({
       dataSource: [],
     });
+    const visible = ref(false);
     let modalVisible = ref(false);
-    console.log(modalVisible);
-    const handleAdd = () => {
-      console.log("before: ");
-      console.log(modalVisible);
-
-      modalVisible.value = true;
-      console.log(modalVisible);
-    };
-
     let selectedTest = reactive([]);
-
+    let searchInput = ref("");
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log(selectedRowKeys);
         selectedTest = selectedRowKeys;
-        console.log(selectedTest);
-        console.log(
-          `selectedRowKeys: ${selectedRowKeys}`,
-          "selectedRows: ",
-          selectedRows
-        );
       },
     };
 
+    // 组件内有新增或编辑操作，更新数据列表
     function getUpdateData(flag) {
-      console.log("get update dataList");
-      console.log(flag);
       getList();
     }
+
+    // 父组件处关闭子组件
     function addParentData(visible) {
-      console.log("in parent function addData");
-      console.log(visible);
       modalVisible.value = visible;
     }
 
+    const handleAdd = () => {
+      modalVisible.value = true;
+    };
+
+    // 获取数据列表
     function getList() {
       let url = path.website.getList;
       getData(url).then((res) => {
@@ -150,7 +140,6 @@ export default defineComponent({
           } else {
             item.slot_values = slot_str.substring(0, slot_str.length - 2);
           }
-
           return item;
         });
         dataSource.dataSource = alldataList;
@@ -164,6 +153,7 @@ export default defineComponent({
         deleteData();
       }
     }
+
     function deleteData() {
       let params = {
         delect_timestamp_list: selectedTest,
@@ -176,7 +166,7 @@ export default defineComponent({
       });
     }
 
-    let searchInput = ref("");
+    // 筛选数据
     function filterList() {
       if (searchInput.value === "") {
         dataSource.dataSource = alldataList;
@@ -192,12 +182,12 @@ export default defineComponent({
       }
     }
 
-    const visible = ref(false);
-
+    // 调用筛选函数
     const hide = () => {
       filterList();
       visible.value = false;
     };
+
     getList();
 
     return {
